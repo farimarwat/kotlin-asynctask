@@ -48,3 +48,5 @@ mTask = AsyncTask<String,Int,String>()
             mTask.execute("Param one","Param two")
         }
 ```
+
+**Note: Complete example app is included**
