@@ -40,6 +40,9 @@ class MainActivity : AppCompatActivity() {
                     mTask.publishProgress(total)
                     Log.e(TAG,"Background: ${total}")
                 }
+
+                //Here is the differed returned value
+                //Note Do not use "return" keyword
                 "${input} : ${total} "
             }
             .onProgressUpdate {
