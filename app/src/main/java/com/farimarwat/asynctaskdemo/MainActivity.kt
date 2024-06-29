@@ -15,50 +15,38 @@ class MainActivity : AppCompatActivity() {
     val mBinding by lazy{
         ActivityMainBinding.inflate(layoutInflater)
     }
-    lateinit var mTask: AsyncTask<String, Int, String>
+    lateinit var mTask: AsyncTask<Int, Int, Int>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(mBinding.root)
 
-        mTask = AsyncTask<String,Int,String>()
+        mTask = AsyncTask<Int,Int,Int>()
             .onPreExecute {
-                //Running on main thread
-                mBinding.txtCounter.text = "Working"
-                Log.e(TAG,"Pre Execute")
+                mBinding.txtCounter.text = "Calculating"
             }
             .onPostExecute {
-                //Running on main thread
-                mBinding.txtCounter.text = "${it}"
-                Log.e(TAG,"Post Execute: ${it}")
+                mBinding.txtCounter.text = "Total: ${it}"
             }
             .doInBackground { input ->
-                //Running on background thread
                 var total = 0
-                for(i in 0..10){
+                input.forEach{
+                    total += it
                     delay(1000)
-                    total += i;
-                    mTask.publishProgress(total)
-                    Log.e(TAG,"Background: ${total}")
+                    publishProgress(total)
                 }
 
-                //Here is the differed returned value
-                //Note Do not use "return" keyword
-                "${input} : ${total} "
+               total
             }
             .onProgressUpdate {
-                //Running on main thread
                 mBinding.txtCounter.text = "${it}"
-                Log.e(TAG,"OnProgressUpdate: ${it}")
+
             }.onCancelled {
                 //Running on main thread
                 Log.e(TAG,"Cancelled: Thread: ${Thread.currentThread().name}")
             }
 
 
-        //Execute the task inside coroutine
-        CoroutineScope(Dispatchers.Main).launch {
-            mTask.execute("Param one","Param two")
-        }
+        mTask.execute(listOf(14,34,63,22))
         mBinding.button.setOnClickListener {
             mTask.cancel()
         }
